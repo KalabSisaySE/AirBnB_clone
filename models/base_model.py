@@ -1,6 +1,5 @@
 #!/usr/bin/python3
-"""the `base_model` module
-defines the class `BaseModel`"""
+"""the `base_model` module defines the class `BaseModel`"""
 from uuid import uuid4
 from datetime import datetime
 
@@ -23,17 +22,13 @@ class BaseModel:
         )
 
     def save(self) -> None:
-        """updates the public instance attribute `updated_at`
-          with the current datetime"""
+        """updates the  attribute `updated_at` with the current datetime"""
         self.updated_at = datetime.now()
 
     def to_dict(self) -> dict:
-        """returns a dictionary containing all keys/values of __dict__ of
-        the instance with some additional attributes"""
+        """returns a dictionary containing attributes of the object"""
         to_dict = self.__dict__.copy()
         to_dict["__class__"] = self.__class__.__name__
-        to_dict["created_at"] = to_dict["created_at"].strftime(
-            "%Y-%m-%dT%H:%M:%S.%f")
-        to_dict["updated_at"] = to_dict["updated_at"].strftime(
-            "%Y-%m-%dT%H:%M:%S.%f")
+        to_dict["created_at"] = self.__dict__["created_at"].isoformat()
+        to_dict["updated_at"] = self.__dict__["updated_at"].isoformat()
         return to_dict
