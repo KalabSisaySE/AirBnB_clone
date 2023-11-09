@@ -2,6 +2,7 @@
 """the `base_model` module defines the class `BaseModel`"""
 from uuid import uuid4
 from datetime import datetime
+from models import storage
 
 
 class BaseModel:
@@ -12,7 +13,7 @@ class BaseModel:
         if kwargs:
             for k, v in kwargs.items():
                 if k != "__class__":
-                    if k in ['created_at', 'created_at']:
+                    if k in ["created_at", "updated_at"]:
                         format_str = "%Y-%m-%dT%H:%M:%S.%f"
                         val = datetime.strptime(v, format_str)
                     else:
@@ -22,6 +23,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)
 
     def __str__(self) -> str:
         """the string representation of a `BaseModel` object"""
@@ -34,6 +36,7 @@ class BaseModel:
     def save(self) -> None:
         """updates the  attribute `updated_at` with the current datetime"""
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self) -> dict:
         """returns a dictionary containing attributes of the object"""
