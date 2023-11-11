@@ -35,6 +35,4 @@ class FileStorage:
                 json_data = json.loads(f.read())
                 for k, v in json_data.items():
                     class_name = k.split(".")[0]
-                    FileStorage.__objects.update(
-                        {k: locals()[class_name](**v)}
-                    )
+                    FileStorage.__objects[k] = BaseModel(**v)
