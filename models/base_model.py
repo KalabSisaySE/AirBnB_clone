@@ -1,0 +1,32 @@
+#!/usr/bin/python3
+"""defines the base class BaseModel"""
+import copy
+from datetime import datetime
+from uuid import uuid4
+
+
+class BaseModel:
+    """represents the common attributes/methods all the other models"""
+
+    def __init__(self):
+        """instantiates the BaseModel"""
+        self.id = str(uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+
+    def __str__(self):
+        """string representation of the model"""
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}]"
+
+    def save(self):
+        """updates the `updated_at` time"""
+        self.updated_at = datetime.now()
+
+    def to_dict(self):
+        """returns a dictionary representation of the instance"""
+        new_dict = copy.deepcopy(self.__dict__)
+        new_dict["__class__"] = self.__class__.__name__
+        new_dict["created_at"] = new_dict["created_at"].isoformat()
+        new_dict["updated_at"] = new_dict["updated_at"].isoformat()
+
+        return new_dict
