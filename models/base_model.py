@@ -8,15 +8,23 @@ from uuid import uuid4
 class BaseModel:
     """represents the common attributes/methods all the other models"""
 
-    def __init__(self):
+    def __init__(self, *args, **kwargs):
         """instantiates the BaseModel"""
-        self.id = str(uuid4())
-        self.created_at = datetime.now()
-        self.updated_at = datetime.now()
+        if kwargs:
+            for key, value in kwargs.items():
+                if key != "__class__":
+                    if key == "created_at" or key == "updated_at":
+                        setattr(self, key, datetime.fromisoformat(value))
+                    else:
+                        setattr(self, key, value)
+        else:
+            self.id = str(uuid4())
+            self.created_at = datetime.now()
+            self.updated_at = datetime.now()
 
     def __str__(self):
         """string representation of the model"""
-        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}]"
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
         """updates the `updated_at` time"""
