@@ -19,6 +19,16 @@ class TestBaseModel(unittest.TestCase):
         self.assertIsInstance(bm1.created_at, datetime)
         self.assertIsInstance(bm1.updated_at, datetime)
 
+        # check recreation
+        bm3 = BaseModel()
+        bm3.string_attr = "Some Value"
+        bm3.numeric_attr = 98
+        bm3_json = bm3.to_dict()
+        new_bm3 = BaseModel(**bm3_json)
+        self.assertEqual(bm3.to_dict(), new_bm3.to_dict())
+        self.assertIsNot(bm3, new_bm3)
+        self.assertNotEqual(new_bm3.__class__, new_bm3.to_dict().get("__class__"))
+
     def test_base_model_string_representation(self):
         """test the BaseModel's string representation"""
         bm = BaseModel()
