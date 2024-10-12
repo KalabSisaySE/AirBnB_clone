@@ -4,6 +4,8 @@ import copy
 from datetime import datetime
 from uuid import uuid4
 
+from models import storage
+
 
 class BaseModel:
     """represents the common attributes/methods all the other models"""
@@ -21,6 +23,7 @@ class BaseModel:
             self.id = str(uuid4())
             self.created_at = datetime.now()
             self.updated_at = datetime.now()
+            storage.new(self)
 
     def __str__(self):
         """string representation of the model"""
@@ -29,6 +32,7 @@ class BaseModel:
     def save(self):
         """updates the `updated_at` time"""
         self.updated_at = datetime.now()
+        storage.save()
 
     def to_dict(self):
         """returns a dictionary representation of the instance"""
