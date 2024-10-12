@@ -11,17 +11,17 @@ class FileStorage:
 
     def all(self):
         """returns all objects"""
-        return self.__class__.__objects
+        return FileStorage.__objects
 
     def new(self, obj):
         """adds the give `obj` to list of objects"""
         key = f"{obj.__class__.__name__}.{obj.id}"
-        self.__class__.__objects[key] = obj
+        FileStorage.__objects[key] = obj
 
     def save(self):
         """serializes objects to JSON file"""
         dict_data = {}
-        for key, val in self.__class__.__objects.items():
+        for key, val in FileStorage.__objects.items():
             dict_data[key] = val.to_dict()
 
         with open(self.__file_path, "w") as file:
@@ -42,4 +42,4 @@ class FileStorage:
             for key, val in json_data.items():
                 class_name = key.split(".")[0]
                 obj = eval(f"{class_name}(**{val})")
-                self.__class__.__objects[key] = obj
+                FileStorage.__objects[key] = obj
