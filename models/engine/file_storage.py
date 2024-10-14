@@ -30,6 +30,7 @@ class FileStorage:
     def reload(self):
         """deserializes JSON file back to objects"""
         from models.base_model import BaseModel
+        from models.user import User
 
         json_data = None
         try:
