@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """defines the base class BaseModel"""
 import copy
-from datetime import datetime
+from datetime import datetime, timezone
 from uuid import uuid4
 
 from models import storage
@@ -21,8 +21,8 @@ class BaseModel:
                         setattr(self, key, value)
         else:
             self.id = str(uuid4())
-            self.created_at = datetime.utcnow()
-            self.updated_at = datetime.utcnow()
+            self.created_at = datetime.now(timezone.utc)
+            self.updated_at = datetime.now(timezone.utc)
             storage.new(self)
 
     def __str__(self):
@@ -31,7 +31,7 @@ class BaseModel:
 
     def save(self):
         """updates the `updated_at` time"""
-        self.updated_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
         storage.save()
 
     def to_dict(self):
