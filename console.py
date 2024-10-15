@@ -63,6 +63,83 @@ class HBNBCommand(cmd.Cmd):
         """prevents empty from executing previous command"""
         pass
 
+    def default(self, line):
+        """handles some utility commands"""
+        if line.startswith(tuple(MODELS)):
+            if "." in line and "(" in line and ")" in line:
+                model = line.split(".")[0]
+                if ".all()" in line:
+                    print(
+                        [
+                            str(obj)
+                            for key, obj in storage.all().items()
+                            if key.startswith(model)
+                        ]
+                    )
+                elif ".count()" in line:
+                    print(
+                        len(
+                            [
+                                obj_id
+                                for obj_id in storage.all()
+                                if obj_id.startswith(model)
+                            ]
+                        )
+                    )
+                elif ".show(" in line:
+                    idx = line.index("(")
+                    obj_id = self.check_and_convert(line[idx + 1 : -1])
+
+                    obj = storage.all().get(f"{model}.{obj_id}")
+                    if obj:
+                        print(obj)
+                    else:
+                        print("** no instance found **")
+                elif ".destroy(" in line:
+                    idx = line.index("(")
+                    obj_id = self.check_and_convert(line[idx + 1 : -1])
+
+                    obj = storage.all().get(f"{model}.{obj_id}")
+                    if obj:
+                        del storage.all()[f"{model}.{obj_id}"]
+                        storage.save()
+                    else:
+                        print("** no instance found **")
+                elif ".update(" in line:
+                    idx = line.index("(") + 1
+                    if "," in line:
+                        first_comma = line.index(",")
+                        obj_id = self.check_and_convert(line[idx:first_comma])
+                        brace_start = line.find("{")
+                        dict_data = None
+
+                        if brace_start >= 0:
+                            dict_data = line[brace_start:-1]
+
+                        if f"{model}.{obj_id}" in storage.all():
+                            obj = storage.all().get(f"{model}.{obj_id}")
+                            if dict_data:
+                                if type(eval(dict_data)) == dict:
+                                    dict_repr = eval(dict_data)
+                                    for key, val in dict_repr.items():
+                                        setattr(
+                                            obj,
+                                            self.check_and_convert(key),
+                                            self.check_and_convert(val),
+                                        )
+                                    storage.save()
+                            else:
+                                args = line[idx:-1].split(", ")
+                                setattr(
+                                    obj,
+                                    self.check_and_convert(args[1]),
+                                    self.check_and_convert(args[2]),
+                                )
+                                storage.save()
+                        else:
+                            print(obj_id)
+                            print("** no instance found **")
+
     def do_EOF(self, line):
         """exits the interpreter"""
         return True
