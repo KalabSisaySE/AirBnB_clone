@@ -4,6 +4,10 @@
     padding: 0;
 }
 
+ul {
+    padding: revert;
+}
+
 body {
     font-size: 14px;
     font-family: Circular, "Helvetica Neue", Helvetica, Arial, sans-serif;
