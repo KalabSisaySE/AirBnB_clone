@@ -9,8 +9,20 @@ class FileStorage:
     __file_path = "file.json"
     __objects = {}
 
-    def all(self):
-        """returns all objects"""
+    def all(self, cls=None):
+        """returns all objects or only classes of given type"""
+        if cls:
+            if isinstance(cls, str):
+                class_name = cls
+            else:
+                class_name = cls.__name__
+            objs = {}
+            for key, val in FileStorage.__objects.items():
+                if key.startswith(class_name):
+                    objs[key] = val
+
+            return objs
+
         return FileStorage.__objects
 
     def new(self, obj):
@@ -49,3 +61,10 @@ class FileStorage:
                 class_name = key.split(".")[0]
                 obj = eval(f"{class_name}(**{val})")
                 FileStorage.__objects[key] = obj
+
+    def delete(self, obj=None):
+        """deletes the given object from the storage"""
+        if obj:
+            key = f"{obj.__class__.__name__}.{obj.id}"
+            if key in FileStorage.__objects:
+                del FileStorage.__objects[key]

@@ -167,10 +167,7 @@ class HBNBCommand(cmd.Cmd):
             obj = eval(f"{args[0]}()")
             if len(args) > 1:
                 for param in args[1:]:
-                    print(param)
                     key, value = str(param).strip().split("=")
-                    print(f"\tkey: {key}")
-                    print(f"\tvalue: {value}")
                     setattr(obj, key, self.check_and_convert(value))
             obj.save()
             print(obj.id)
