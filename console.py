@@ -26,6 +26,7 @@ class HBNBCommand(cmd.Cmd):
             trimmed_line = line.strip()
             is_double_quote_arg = False
             arg = ""
+            previous_arg = ""
 
             for char in trimmed_line:
                 if is_double_quote_arg or char != " ":
@@ -33,7 +34,7 @@ class HBNBCommand(cmd.Cmd):
 
                 if not is_double_quote_arg and char == '"':
                     is_double_quote_arg = True
-                elif is_double_quote_arg and char == '"':
+                elif is_double_quote_arg and char == '"' and previous_arg != "\\":
                     args.append(arg)
                     is_double_quote_arg = False
                     arg = ""
@@ -41,6 +42,8 @@ class HBNBCommand(cmd.Cmd):
                     if arg:
                         args.append(arg)
                     arg = ""
+
+                previous_arg = char
 
             if arg:
                 args.append(arg)
@@ -57,7 +60,11 @@ class HBNBCommand(cmd.Cmd):
             try:
                 return float(val)
             except ValueError:
-                return val.replace("'", "").replace('"', "")
+                if val[0] == '"' or val[0] == "'":
+                    val = val[1:]
+                if val[-1] == '"' or val[-1] == "'":
+                    val = val[:-1]
+                return val.replace("\\", "")
 
     def emptyline(self):
         """prevents empty from executing previous command"""
@@ -158,6 +165,13 @@ class HBNBCommand(cmd.Cmd):
             print("** class doesn't exist **")
         else:
             obj = eval(f"{args[0]}()")
+            if len(args) > 1:
+                for param in args[1:]:
+                    print(param)
+                    key, value = str(param).strip().split("=")
+                    print(f"\tkey: {key}")
+                    print(f"\tvalue: {value}")
+                    setattr(obj, key, self.check_and_convert(value))
             obj.save()
             print(obj.id)
 
